@@ -1,0 +1,11 @@
+ansible_vault_user: "{{ ansible_env.SUDO_USER | default(ansible_env.USER) }}"
+
+ansible_vault_user_home: "/home/{{ ansible_vault_user }}"
+ansible_vault_path: "/home/{{ ansible_vault_user }}/.ansible/.vault"
+
+# will be created in ansible_vault_path and provided as alias vault-<name>
+ansible_vaults: []
+#  - name: demo
+#    hint: Ask john doe
+
+ansible_vault_bash_rc: "{{ ansible_vault_user_home }}/.bashrc"

@@ -1,0 +1,16 @@
+#!/bin/bash
+
+DIR="{{ ansible_vault_path }}"
+FILE="$DIR/.vault_{{ item.name }}"
+
+if [[ ! -f $FILE ]]
+then
+  echo "vaultfile $FILE is not available, enter password ({{ item.hint }}): "
+  read -s password
+  echo "$password" > $FILE
+  echo "writing password to ${FILE}."
+
+fi
+
+echo "setting ANSIBLE_VAULT_PASSWORD_FILE to $FILE"
+export ANSIBLE_VAULT_PASSWORD_FILE="$FILE"

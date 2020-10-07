@@ -1,0 +1,27 @@
+- name: "Ensure .vault directory exists"
+  file:
+    path: "{{ ansible_vault_path }}"
+    state: directory
+    mode: 0700
+
+- name: "Deploy vault templates."
+  template:
+    src: templates/vault.sh.j2
+    dest: "{{ ansible_vault_path }}/vault-{{ item.name }}.sh"
+    mode: 0700
+  with_items: "{{ ansible_vaults }}"
+
+- name: "Deploy vault reset alias."
+  blockinfile:
+    path: "{{ ansible_vault_bash_rc }}"
+    marker: "# {mark} ansible vault reset alias"
+    block: "alias vault-reset='unset ANSIBLE_VAULT_PASSWORD_FILE'"
+    create: yes
+
+- name: "Deploy vault alias."
+  blockinfile:
+    path: "{{ ansible_vault_bash_rc }}"
+    marker: "# {mark} ansible vault alias for {{ item.name }}"
+    block: "alias vault-{{ item.name }}='source {{ ansible_vault_path }}/vault-{{ item.name }}.sh'"
+    create: yes
+  with_items: "{{ ansible_vaults }}"
